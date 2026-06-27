@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Slate
 
-## Getting Started
+The simplest daily todo app. Open, write, complete, close.
 
-First, run the development server:
+## Quick Start
 
 ```bash
+cp .env.example .env
+npm install
+npm run db:migrate:dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Configure Google OAuth and/or SMTP in `.env` for authentication.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture
 
-## Learn More
+```
+src/
+├── app/                    # Next.js App Router pages & API routes
+│   ├── api/auth/           # Auth.js handlers
+│   ├── api/tasks/          # Task CRUD + carry-over
+│   ├── login/              # Auth page
+│   └── page.tsx            # Today screen
+├── components/             # Shared UI & providers
+├── features/
+│   ├── auth/               # Login components
+│   └── tasks/              # Task UI components
+├── hooks/                  # React Query hooks
+├── lib/
+│   ├── offline/            # IndexedDB + sync queue
+│   ├── auth.ts             # Auth.js server config
+│   └── auth.config.ts      # Edge-safe auth config
+├── server/                 # Server-side business logic
+├── stores/                 # Zustand UI state
+└── types/                  # Shared TypeScript types
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js 15** — App Router, API routes
+- **Prisma 6** — SQLite (dev & prod)
+- **Auth.js** — Google + email magic link
+- **TanStack Query** — Server state + optimistic updates
+- **Zustand** — UI state (undo, expanded notes)
+- **IndexedDB** — Offline persistence
+- **Framer Motion** — Task animations
+- **next-pwa** — Service worker + installability
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run db:migrate:dev` | Run migrations (dev) |
+| `npm run db:migrate` | Deploy migrations (prod) |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Run unit tests |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for Hostinger VPS setup with PM2, Nginx, and SSL.
+
+## Capacitor (Future Mobile)
+
+`capacitor.config.ts` is pre-configured. When ready:
+
+```bash
+npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
+npx cap add ios && npx cap add android
+npx cap sync
+```
