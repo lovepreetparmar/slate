@@ -32,10 +32,9 @@ export function getAuthProviders(): Provider[] {
     );
   }
 
-  if (
-    process.env.AUTH_DEV_MODE === "true" &&
-    process.env.NODE_ENV === "development"
-  ) {
+  const devModeEnabled = process.env.AUTH_DEV_MODE === "true";
+
+  if (devModeEnabled) {
     providers.push(
       Credentials({
         id: "dev",
@@ -76,8 +75,6 @@ export function getAuthConfig() {
   return {
     hasGoogle: !!(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET),
     hasMagicLink: !!(process.env.EMAIL_SERVER_HOST && process.env.EMAIL_FROM),
-    hasDev:
-      process.env.AUTH_DEV_MODE === "true" &&
-      process.env.NODE_ENV === "development",
+    hasDev: process.env.AUTH_DEV_MODE === "true",
   };
 }
