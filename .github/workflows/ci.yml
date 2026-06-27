@@ -10,8 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: slate
+          POSTGRES_PASSWORD: slate
+          POSTGRES_DB: slate
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      DATABASE_URL: file:./dev.db
+      DATABASE_URL: postgresql://slate:slate@localhost:5432/slate?schema=public
       AUTH_SECRET: ci-test-secret
       AUTH_DEV_MODE: "true"
       NEXT_PUBLIC_APP_URL: http://localhost:3000
